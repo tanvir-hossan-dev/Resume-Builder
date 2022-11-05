@@ -1,6 +1,9 @@
 import React from "react";
+import { useGetResumesQuery } from "../../redux/featuers/resumeApi/resumeApi";
 
 const ResumeForm = () => {
+  const { data } = useGetResumesQuery();
+  console.log(data);
   return (
     <div className="mx-auto w-[1280px] mt-[30px] border-solid border-2 mb-8 border-gray-400 px-8 py-4 rounded-md">
       <h1 className="text-center text-main text-[32px]">Resume Builder</h1>
