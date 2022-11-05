@@ -1,12 +1,23 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const mongoose = require("mongoose");
+const router = require("./routes/index");
 
-app.get("/", (req, res) => {
-  res.send({ Message: "This is a message" });
-});
+app.use(cors());
+app.use(express.json());
+let port = 4000;
 
-app.listen(4000, () => {
-  console.log("post is ready");
-});
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`${port} port is start`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+app.use(router);
