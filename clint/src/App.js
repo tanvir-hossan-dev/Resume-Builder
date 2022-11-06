@@ -10,7 +10,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<ResumeForm />} />
-        <Route path="/showresume" element={<ShowResume />} />
+        <Route path="/resume" element={<ShowResume />} />
       </Routes>
     </BrowserRouter>
   );
