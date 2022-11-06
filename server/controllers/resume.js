@@ -11,6 +11,7 @@ exports.deleteResuem = async (req, res) => {
 };
 
 exports.updateResume = async (req, res) => {
+  console.log(req.body);
   try {
     const { id } = req.params;
     let resume = await resumeModel.findById(id);
@@ -31,7 +32,6 @@ exports.getResume = async (req, res) => {
 };
 
 exports.postResume = async (req, res) => {
-  console.log(req.body);
   try {
     const resumeData = new resumeModel(req.body);
     await resumeData.save();

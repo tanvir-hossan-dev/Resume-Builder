@@ -1,41 +1,79 @@
 import React from "react";
 import { useState } from "react";
-import { useAddResumeMutation, useGetResumesQuery } from "../../redux/featuers/resumeApi/resumeApi";
+import {
+  useAddResumeMutation,
+  useGetResumesQuery,
+  useUpdateResumeMutation,
+} from "../../redux/featuers/resumeApi/resumeApi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
-const ResumeForm = () => {
-  const initialForm = {
-    title: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    country: "",
-    city: "",
-    description: "",
-    emPositionName: "",
-    emStartDate: "",
-    emEndDate: "",
-    collageName: "",
-    degree: "",
-    passingYear: "",
-    website: "",
-    facebook: "",
-    linkedIn: "",
-    github: "",
-    twitter: "",
-    addSkills: "",
-    internPosition: "",
-    internCompnay: "",
-    internStartDate: "",
-    internEndDate: "",
-    refName: "",
-    refCompnay: "",
-    refPosition: "",
-    refEmail: "",
-    refPhone: "",
-  };
+const ResumeForm = ({ singleResume, editMode, setEditMode }) => {
+  const navigate = useNavigate();
+  const initialForm = editMode
+    ? {
+        title: singleResume.title || "",
+        firstName: singleResume.firstName || "",
+        lastName: singleResume.lastName || "",
+        email: singleResume.email || "",
+        phone: singleResume.phone || "",
+        country: singleResume.country || "",
+        city: singleResume.city || "",
+        description: singleResume.description || "",
+        emPositionName: singleResume?.employmentHistory?.emPositionName || "",
+        emStartDate: singleResume?.employmentHistory?.emStartDate || "",
+        emEndDate: singleResume?.employmentHistory?.emEndDate || "",
+        collageName: singleResume?.education?.collageName || "",
+        degree: singleResume?.education?.degree || "",
+        passingYear: singleResume?.education?.passingYear || "",
+        website: singleResume?.links?.website || "",
+        facebook: singleResume?.links?.facebook || "",
+        linkedIn: singleResume?.links?.linkedIn || "",
+        github: singleResume?.links?.github || "",
+        twitter: singleResume?.links?.twitter || "",
+        addSkills: singleResume?.addSkills || "",
+        internPosition: singleResume?.internship?.internPosition || "",
+        internCompnay: singleResume?.internship?.internCompnay || "",
+        internStartDate: singleResume?.internship?.internStartDate || "",
+        internEndDate: singleResume?.internship?.internEndDate || "",
+        refName: singleResume?.reference?.refName || "",
+        refCompnay: singleResume?.reference?.refCompnay || "",
+        refPosition: singleResume?.reference?.refPosition || "",
+        refEmail: singleResume?.reference?.refEmail || "",
+        refPhone: singleResume?.reference?.refPhone || "",
+      }
+    : {
+        title: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        country: "",
+        city: "",
+        description: "",
+        emPositionName: "",
+        emStartDate: "",
+        emEndDate: "",
+        collageName: "",
+        degree: "",
+        passingYear: "",
+        website: "",
+        facebook: "",
+        linkedIn: "",
+        github: "",
+        twitter: "",
+        addSkills: "",
+        internPosition: "",
+        internCompnay: "",
+        internStartDate: "",
+        internEndDate: "",
+        refName: "",
+        refCompnay: "",
+        refPosition: "",
+        refEmail: "",
+        refPhone: "",
+      };
 
   const [formInputs, setFormInput] = useState({ ...initialForm });
   const handleChange = (e) => {
@@ -47,6 +85,8 @@ const ResumeForm = () => {
   const { data } = useGetResumesQuery();
 
   const [addResume] = useAddResumeMutation();
+
+  const [updateResume] = useUpdateResumeMutation();
 
   const isValid = (formData) => {
     const {
@@ -194,6 +234,91 @@ const ResumeForm = () => {
       addResume(formData);
       toast.success("Form Submit Complete");
       setFormInput({ ...initialForm });
+      navigate("/resume");
+    }
+  };
+
+  const handleUpdateResume = (e) => {
+    e.preventDefault();
+    const {
+      title,
+      firstName,
+      lastName,
+      email,
+      phone,
+      country,
+      city,
+      description,
+      emPositionName,
+      emStartDate,
+      emEndDate,
+      collageName,
+      degree,
+      passingYear,
+      website,
+      facebook,
+      linkedIn,
+      github,
+      twitter,
+      addSkills,
+      internPosition,
+      internCompnay,
+      internStartDate,
+      internEndDate,
+      refName,
+      refCompnay,
+      refPosition,
+      refEmail,
+      refPhone,
+    } = formInputs;
+    const data = {
+      title,
+      firstName,
+      lastName,
+      email,
+      phone,
+      country,
+      city,
+      description,
+      employmentHistory: {
+        emPositionName,
+        emStartDate,
+        emEndDate,
+      },
+      education: {
+        collageName,
+        degree,
+        passingYear,
+      },
+      links: {
+        website,
+        facebook,
+        linkedIn,
+        github,
+        twitter,
+      },
+      addSkills,
+      internship: {
+        internPosition,
+        internCompnay,
+        internStartDate,
+        internEndDate,
+      },
+      reference: {
+        refName,
+        refCompnay,
+        refPosition,
+        refEmail,
+        refPhone,
+      },
+    };
+    const id = singleResume?._id;
+    console.log(id);
+    if (isValid(formInputs)) {
+      toast.success("Form Update Complete");
+      updateResume({ data, id }).then(() => {
+        setEditMode(false);
+      });
     }
   };
 
@@ -684,10 +809,11 @@ const ResumeForm = () => {
           {/* submit button */}
           <div className="text-center mt-4">
             <button
-              onClick={handleSubmit}
+              onClick={editMode ? handleUpdateResume : handleSubmit}
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              Submit
+              {" "}
+              {editMode ? "Update" : "Submit"}
             </button>
           </div>
           <ToastContainer
