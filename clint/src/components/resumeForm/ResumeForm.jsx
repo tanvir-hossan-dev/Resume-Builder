@@ -1,9 +1,202 @@
 import React from "react";
-import { useGetResumesQuery } from "../../redux/featuers/resumeApi/resumeApi";
+import { useState } from "react";
+import { useAddResumeMutation, useGetResumesQuery } from "../../redux/featuers/resumeApi/resumeApi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ResumeForm = () => {
+  const initialForm = {
+    title: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    country: "",
+    city: "",
+    description: "",
+    emPositionName: "",
+    emStartDate: "",
+    emEndDate: "",
+    collageName: "",
+    degree: "",
+    passingYear: "",
+    website: "",
+    facebook: "",
+    linkedIn: "",
+    github: "",
+    twitter: "",
+    addSkills: "",
+    internPosition: "",
+    internCompnay: "",
+    internStartDate: "",
+    internEndDate: "",
+    refName: "",
+    refCompnay: "",
+    refPosition: "",
+    refEmail: "",
+    refPhone: "",
+  };
+
+  const [formInputs, setFormInput] = useState({ ...initialForm });
+  const handleChange = (e) => {
+    setFormInput({
+      ...formInputs,
+      [e.target.name]: e.target.value,
+    });
+  };
   const { data } = useGetResumesQuery();
-  console.log(data);
+
+  const [addResume] = useAddResumeMutation();
+
+  const isValid = (formData) => {
+    const {
+      title,
+      firstName,
+      lastName,
+      email,
+      phone,
+      country,
+      city,
+      description,
+      collageName,
+      degree,
+      passingYear,
+      website,
+      facebook,
+      linkedIn,
+      github,
+      twitter,
+      addSkills,
+    } = formData;
+
+    if (
+      !title.length &&
+      !firstName.length &&
+      !lastName.length &&
+      !email.length &&
+      !phone.length &&
+      !country.length &&
+      !city.length &&
+      !description.length &&
+      !collageName.length &&
+      !degree.length &&
+      !passingYear.length &&
+      !website.length &&
+      !facebook.length &&
+      !linkedIn.length &&
+      !github.length &&
+      !twitter.length &&
+      !addSkills.length
+    ) {
+      toast.error("please fullfill your all information");
+    } else if (!title.length) {
+      toast.error("please fullfill your Title");
+    } else if (!firstName.length) {
+      toast.error("please fullfill your First Name");
+    } else if (!lastName.length) {
+      toast.error("please fullfill your Last Name");
+    } else if (!email.length) {
+      toast.error("please fullfill your Email");
+    } else if (!phone.length) {
+      toast.error("please fullfill your Phone");
+    } else if (!country.length) {
+      toast.error("please fullfill your Country");
+    } else if (!city.length) {
+      toast.error("please fullfill your City");
+    } else if (!description.length) {
+      toast.error("please fullfill your Description");
+    } else if (!collageName.length || !degree.length || !passingYear.length) {
+      toast.error("please fullfill your Educational Information");
+    } else if (!website.length || !facebook.length || !linkedIn.length || !github.length || !twitter.length) {
+      toast.error("please fullfill your Social Links");
+    } else if (!addSkills.length) {
+      toast.error("please fullfill your Skills");
+    } else {
+      return true;
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const {
+      title,
+      firstName,
+      lastName,
+      email,
+      phone,
+      country,
+      city,
+      description,
+      emPositionName,
+      emStartDate,
+      emEndDate,
+      collageName,
+      degree,
+      passingYear,
+      website,
+      facebook,
+      linkedIn,
+      github,
+      twitter,
+      addSkills,
+      internPosition,
+      internCompnay,
+      internStartDate,
+      internEndDate,
+      refName,
+      refCompnay,
+      refPosition,
+      refEmail,
+      refPhone,
+    } = formInputs;
+    const formData = {
+      title,
+      firstName,
+      lastName,
+      email,
+      phone,
+      country,
+      city,
+      description,
+      employmentHistory: {
+        emPositionName,
+        emStartDate,
+        emEndDate,
+      },
+      education: {
+        collageName,
+        degree,
+        passingYear,
+      },
+      links: {
+        website,
+        facebook,
+        linkedIn,
+        github,
+        twitter,
+      },
+      addSkills,
+      internship: {
+        internPosition,
+        internCompnay,
+        internStartDate,
+        internEndDate,
+      },
+      reference: {
+        refName,
+        refCompnay,
+        refPosition,
+        refEmail,
+        refPhone,
+      },
+    };
+    if (isValid(formInputs)) {
+      addResume(formData);
+      toast.success("Form Submit Complete");
+      setFormInput({ ...initialForm });
+    }
+  };
+
   return (
     <div className="mx-auto w-[1280px] mt-[30px] border-solid border-2 mb-8 border-gray-400 px-8 py-4 rounded-md">
       <h1 className="text-center text-main text-[32px]">Resume Builder</h1>
@@ -12,15 +205,18 @@ const ResumeForm = () => {
         <form>
           <div className="grid gap-6 mb-6 md:grid-cols-2">
             <div>
-              <label for="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              <label for="title" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                 Add Position
               </label>
               <input
                 type="text"
-                id="first_name"
+                id="title"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Add Position"
                 required
+                name="title"
+                value={formInputs.title}
+                onChange={handleChange}
               />
             </div>
             <div>
@@ -35,11 +231,17 @@ const ResumeForm = () => {
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">First Name</label>
+              <label for="firstName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                First Name
+              </label>
               <input
                 type="text"
+                id="firstName"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="First Name"
+                name="firstName"
+                value={formInputs.firstName}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -52,6 +254,9 @@ const ResumeForm = () => {
                 id="last_name"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Last Name"
+                name="lastName"
+                value={formInputs.lastName}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -64,6 +269,9 @@ const ResumeForm = () => {
                 id="email"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Email address"
+                name="email"
+                value={formInputs.email}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -76,6 +284,9 @@ const ResumeForm = () => {
                 id="phone"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Phone"
+                name="phone"
+                value={formInputs.phone}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -88,6 +299,9 @@ const ResumeForm = () => {
                 id="country"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Country"
+                name="country"
+                value={formInputs.country}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -100,6 +314,9 @@ const ResumeForm = () => {
                 id="city"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="City"
+                name="city"
+                value={formInputs.city}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -116,6 +333,9 @@ const ResumeForm = () => {
               id="summery"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Professional Summery"
+              name="description"
+              value={formInputs.description}
+              onChange={handleChange}
               required
             />
           </div>
@@ -133,6 +353,9 @@ const ResumeForm = () => {
                   id="positionName"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Position Name"
+                  name="emPositionName"
+                  value={formInputs.emPositionName}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -140,10 +363,13 @@ const ResumeForm = () => {
                   Start Date
                 </label>
                 <input
-                  type="date"
+                  type="text"
                   id="startDate"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Start Date"
+                  name="emStartDate"
+                  value={formInputs.emStartDate}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -151,10 +377,13 @@ const ResumeForm = () => {
                   End Date
                 </label>
                 <input
-                  type="date"
+                  type="text"
                   id="endDate"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="End Date"
+                  name="emEndDate"
+                  value={formInputs.emEndDate}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -172,6 +401,9 @@ const ResumeForm = () => {
                   id="collagename"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="School / Collage Name"
+                  name="collageName"
+                  value={formInputs.collageName}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -184,6 +416,9 @@ const ResumeForm = () => {
                   id="degree"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Class / Degree"
+                  name="degree"
+                  value={formInputs.degree}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -192,10 +427,13 @@ const ResumeForm = () => {
                   Passing Year
                 </label>
                 <input
-                  type="date"
+                  type="text"
                   id="passignYear"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Passing Year"
+                  name="passingYear"
+                  value={formInputs.passingYear}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -214,6 +452,9 @@ const ResumeForm = () => {
                   id="Website"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Website"
+                  name="website"
+                  value={formInputs.website}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -226,6 +467,9 @@ const ResumeForm = () => {
                   id="Facebook"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Facebook"
+                  name="facebook"
+                  value={formInputs.facebook}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -238,6 +482,9 @@ const ResumeForm = () => {
                   id="LinkedIn"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="LinkedIn"
+                  name="linkedIn"
+                  value={formInputs.linkedIn}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -250,6 +497,9 @@ const ResumeForm = () => {
                   id="GitHub"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="GitHub"
+                  name="github"
+                  value={formInputs.github}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -262,6 +512,9 @@ const ResumeForm = () => {
                   id="Twitter"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Twitter"
+                  name="twitter"
+                  value={formInputs.twitter}
+                  onChange={handleChange}
                   required
                 />
               </div>
@@ -279,6 +532,9 @@ const ResumeForm = () => {
               id="skills"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Add Skills"
+              name="addSkills"
+              value={formInputs.addSkills}
+              onChange={handleChange}
               required
             />
           </div>
@@ -296,6 +552,9 @@ const ResumeForm = () => {
                   id="interPosition"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Position"
+                  name="internPosition"
+                  value={formInputs.internPosition}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -307,6 +566,9 @@ const ResumeForm = () => {
                   id="internCompany"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Company Name"
+                  name="internCompnay"
+                  value={formInputs.internCompnay}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -314,10 +576,13 @@ const ResumeForm = () => {
                   Start Date
                 </label>
                 <input
-                  type="date"
+                  type="text"
                   id="interstartDate"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Start Date"
+                  name="internStartDate"
+                  value={formInputs.internStartDate}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -325,10 +590,13 @@ const ResumeForm = () => {
                   End Date
                 </label>
                 <input
-                  type="date"
+                  type="text"
                   id="internendDate"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="End Date"
+                  name="internEndDate"
+                  value={formInputs.internEndDate}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -347,6 +615,9 @@ const ResumeForm = () => {
                   id="refname"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Name"
+                  name="refName"
+                  value={formInputs.refName}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -358,6 +629,9 @@ const ResumeForm = () => {
                   id="refCompany"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Company Name"
+                  name="refCompnay"
+                  value={formInputs.refCompnay}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -369,6 +643,9 @@ const ResumeForm = () => {
                   id="refposition"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Position"
+                  name="refPosition"
+                  value={formInputs.refPosition}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -382,6 +659,9 @@ const ResumeForm = () => {
                   id="refEmail"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Email"
+                  name="refEmail"
+                  value={formInputs.refEmail}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -393,6 +673,9 @@ const ResumeForm = () => {
                   id="refNumber"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Number"
+                  name="refPhone"
+                  value={formInputs.refPhone}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -401,12 +684,24 @@ const ResumeForm = () => {
           {/* submit button */}
           <div className="text-center mt-4">
             <button
-              type="submit"
+              onClick={handleSubmit}
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
               Submit
             </button>
           </div>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            limit={0}
+            hideProgressBar={false}
+            newestOnTop={false}
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
         </form>
       </div>
     </div>

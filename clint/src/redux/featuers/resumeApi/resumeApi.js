@@ -5,7 +5,14 @@ const resumeApi = apiSlice.injectEndpoints({
     getResumes: builder.query({
       query: () => "/",
     }),
+    addResume: builder.mutation({
+      query: (data) => ({
+        url: "/post",
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useGetResumesQuery } = resumeApi;
+export const { useGetResumesQuery, useAddResumeMutation } = resumeApi;

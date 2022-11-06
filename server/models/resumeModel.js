@@ -33,21 +33,21 @@ const resumeSchema = mongoose.Schema({
     required: true,
   },
   employmentHistory: {
-    positionName: String,
-    startDate: Number,
-    endDate: Number,
+    emPositionName: String,
+    emStartDate: String,
+    emEndDate: String,
   },
   education: {
     collageName: {
       type: String,
       required: true,
     },
-    class: {
+    degree: {
       type: String,
       required: true,
     },
-    passignYear: {
-      type: Number,
+    passingYear: {
+      type: String,
       required: true,
     },
   },
@@ -78,17 +78,17 @@ const resumeSchema = mongoose.Schema({
     required: true,
   },
   internship: {
-    position: String,
-    compnay: String,
-    startDate: Number,
-    endDate: Number,
+    internPosition: String,
+    internCompnay: String,
+    internStartDate: String,
+    internEndDate: String,
   },
   reference: {
-    name: String,
-    compnay: String,
-    position: String,
-    email: String,
-    phone: Number,
+    refName: String,
+    refCompnay: String,
+    refPosition: String,
+    refEmail: String,
+    refPhone: Number,
   },
 });
 

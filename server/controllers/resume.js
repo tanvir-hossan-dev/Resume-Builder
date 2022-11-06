@@ -31,11 +31,12 @@ exports.getResume = async (req, res) => {
 };
 
 exports.postResume = async (req, res) => {
+  console.log(req.body);
   try {
     const resumeData = new resumeModel(req.body);
     await resumeData.save();
     res.status(200).json(resumeData);
   } catch (e) {
-    console.log(e);
+    console.log(e.message);
   }
 };
