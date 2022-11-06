@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const apiSlice = createApi({
   reducerPath: "apiSlice",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:4000/api/v1/resume",
+    baseUrl: "https://resume-builder.herokuapp.com/",
   }),
   endpoints: (builder) => ({}),
 });
